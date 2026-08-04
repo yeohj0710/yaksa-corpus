@@ -111,7 +111,7 @@ await runJobs({
         if (!png) throw new Error(`렌더 없음 p${page}`);
         const got = await vision({
           model: LLM.vision, system: TRANSCRIBE_SYSTEM, prompt: TRANSCRIBE_PROMPT,
-          imageBase64: pngBase64(png), maxTokens: 8000,
+          imageBase64: pngBase64(png), maxTokens: 24000,
         });
         const a = normalize(truth), b = normalize(got);
         const tt = tokens(truth), tg = tokens(got);

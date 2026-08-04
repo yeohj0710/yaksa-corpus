@@ -65,9 +65,11 @@ for (const r of rows) {
           const pngs = await ensureRendered(r);
           const png = pngs.get(page);
           if (!png) throw new Error(`렌더 없음: p${page}`);
+          // 밀집 도해(책받침·단권화)는 한 쪽에서 5,000 토큰을 넘깁니다.
+          // 잘리면 llm.mjs 가 던지므로 손실되진 않지만, 넉넉히 잡아야 재실행이 없습니다.
           body = await vision({
             model: LLM.vision, system: TRANSCRIBE_SYSTEM, prompt: TRANSCRIBE_PROMPT,
-            imageBase64: pngBase64(png), maxTokens: 8000,
+            imageBase64: pngBase64(png), maxTokens: 24000,
           });
         }
         ensureDir(dir);
