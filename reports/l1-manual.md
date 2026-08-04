@@ -18,3 +18,10 @@
 - `npm run l1:worklist`에서 기존 L1 파일이 없는 vision 페이지를 `(content_sha, page, subject_key)` JSONL로 출력함
 - 2026-08-04 현재 미작성 목록: 5,490쪽
 - pathophysiology 미작성 목록: 161쪽
+
+## 레이아웃 라벨 정리
+
+- `scripts/l1-strip-labels.mjs`의 기본 실행으로 대상 목록을 먼저 출력함
+- 정확히 일치한 대상: 153건 (`C. 표` 74, `A. 흐르는 글 / 목록` 39, `B. 다단 조판` 38, 복합 라벨 2)
+- `--apply` 실행 후 재검사: 첫 비어있지 않은 본문 줄의 대상 0건
+- 본문 제목 `B. 공부방법 & TIP`은 대상 문자열이 아니므로 보존함
