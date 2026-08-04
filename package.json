@@ -20,6 +20,7 @@
     "privacy-check": "node scripts/privacy-check.mjs",
     "privacy-check:history": "node scripts/privacy-check.mjs --history",
     "audit:rotation": "node scripts/audit-rotation.mjs",
-    "cost": "node scripts/cost.mjs"
+    "cost": "node scripts/cost.mjs",
+    "run:all": "node scripts/run-all.mjs"
   }
 }

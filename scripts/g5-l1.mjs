@@ -1,4 +1,4 @@
-/**
+﻿/**
  * G5 — L1 원문 전사. 쪽 하나당 마크다운 하나.
  *
  *   node scripts/g5-l1.mjs --type textbook          주교재만
@@ -69,7 +69,7 @@ for (const r of rows) {
           // 잘리면 llm.mjs 가 던지므로 손실되진 않지만, 넉넉히 잡아야 재실행이 없습니다.
           body = await vision({
             model: LLM.vision, system: TRANSCRIBE_SYSTEM, prompt: TRANSCRIBE_PROMPT,
-            imageBase64: pngBase64(png), maxTokens: 24000,
+            imageBase64: pngBase64(png), tag: `l1-${r.subject_key}`, maxTokens: 24000,
           });
         }
         ensureDir(dir);

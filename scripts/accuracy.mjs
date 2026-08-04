@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 전사 정확도 측정. 이 파이프라인에서 품질을 숫자로 말할 수 있는 유일한 지점입니다.
  *
  * CLEAN 페이지(1,772쪽)에는 pdftotext 라는 공짜 정답지가 있습니다.
@@ -111,7 +111,7 @@ await runJobs({
         if (!png) throw new Error(`렌더 없음 p${page}`);
         const got = await vision({
           model: LLM.vision, system: TRANSCRIBE_SYSTEM, prompt: TRANSCRIBE_PROMPT,
-          imageBase64: pngBase64(png), maxTokens: 24000,
+          imageBase64: pngBase64(png), tag: "accuracy", maxTokens: 24000,
         });
         const a = normalize(truth), b = normalize(got);
         const tt = tokens(truth), tg = tokens(got);

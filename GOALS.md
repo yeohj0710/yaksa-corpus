@@ -23,25 +23,38 @@ npm run verify      # 게이트 전량
 
 ## G-A. L1 전량 전사 (가장 큼, 6,210쪽)
 
-가장 오래 걸리는 작업입니다. 며칠 잡으세요.
+가장 오래 걸리는 작업입니다. 며칠 잡으세요. **명령은 이거 하나입니다.**
 
 ```bash
-node scripts/audit-rotation.mjs --purge
-npm run g1
-npm run g5
+npm run run:all -- --limit-usd 30
 ```
 
-`audit-rotation` 을 **반드시 먼저** 돌립니다. 눕혀진 문서 33개 804쪽이 있고,
-눕힌 채로 넣으면 모델이 글자를 못 읽고 **내용을 지어냅니다**(확인된 사례 있음).
+`scripts/run-all.mjs` 가 20단계를 순서대로 돕니다. 회전 감사 → 렌더 → CLEAN 전사 →
+과목별 비전 전사 15개 → 정확도 → 게이트. 전부 재개 가능합니다.
 
-과목 단위로 잘라서 돌리면 진행 상황을 보기 쉽습니다.
+- 죽으면 **같은 명령을 다시** 치세요. 끝난 쪽은 건너뜁니다
+- 게이트가 실패하면 거기서 멈춥니다. 다음 단계로 안 넘어갑니다
+- 비용이 상한에 닿으면 멈추고 재개 명령을 알려줍니다
+- 진행 기록은 `reports/run-all.log`
 
-```bash
-npm run g5 -- --subject law
-npm run g5 -- --subject pharmacotherapy
-```
+무엇을 돌릴지 먼저 보려면 `npm run run:all -- --dry`.
+특정 단계부터는 `npm run run:all -- --from l1-law`.
+
+회전 감사가 렌더보다 **먼저**인 게 중요합니다. 눕혀진 문서 33개 804쪽이 있고,
+눕힌 채로 비전에 넣으면 모델이 글자를 못 읽고 **내용을 지어냅니다**(확인된 사례 있음).
 
 완료 조건: `npm run verify` 의 쪽수 정합 통과, quarantine 신규 0.
+
+### 비용
+
+```bash
+npm run cost            # 누적, 단계별
+npm run cost -- --today
+```
+
+남은 6,210쪽 추정 **$23** (입력 21.1M · 출력 15.5M, 밀집 도해 비중에 따라 ±50%).
+**이 비용은 OpenAI API 키에 청구됩니다. Codex 구독 무제한과 별개입니다.**
+스크립트가 `LLM_API_KEY` 로 직접 호출하기 때문에, Codex 가 실행해도 그대로 과금됩니다.
 
 ### 중간 점검 (G-A 진행 중 주기적으로)
 
