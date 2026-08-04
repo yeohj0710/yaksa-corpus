@@ -127,8 +127,15 @@ if (!existsSync(gFile)) add("guide.json", null, "미실행");
 else {
   const gs = readJSON(gFile, []);
   add("guide.json 15과목", gs.length === 15, `${gs.length}과목`);
+  // 과목마다 실질 내용이 하나라도 있어야 합니다.
+  const empty = gs.filter((g) => !g.notes?.length && !g.recommended_materials?.length && !g.study_order?.length)
+                  .map((g) => g.subject_key);
+  add("과목마다 내용 존재", empty.length === 0, empty.length ? `빈 과목: ${empty.join(",")}` : "");
+  // 단원 순위는 원문에 있을 때만 채웁니다. 없는 과목이 정상입니다.
+  // (약사법규 가이드는 "그냥 정공법으로"라고만 적혀 있어 단원 순위 자체가 없습니다.)
   const noUnit = gs.filter((g) => !g.unit_priority?.length).map((g) => g.subject_key);
-  add("단원 순위 1개 이상", noUnit.length === 0, noUnit.length ? `없는 과목: ${noUnit.join(",")}` : "");
+  add("단원 순위 (원문에 있는 과목만)", noUnit.length ? null : true,
+      noUnit.length ? `원문에 순위 없음: ${noUnit.join(",")} — 정상` : `15과목 전부 있음`);
 }
 
 console.log("\n── 정확도 ───────────────────────────────────────");
@@ -137,8 +144,12 @@ add("전사 정확도 측정", existsSync(accFile) ? true : null,
     existsSync(accFile) ? "reports/accuracy.md" : "미실행 — npm run accuracy");
 
 console.log("\n── quarantine ───────────────────────────────────");
+// 이 파일은 누적 이력입니다. 재실행으로 해결된 항목도 남아 있으므로
+// 통과/실패 판정에 쓰지 않고 개수만 알립니다.
+// 실제 완결 여부는 위의 문항 수·정답 커버리지·쪽수 정합이 판정합니다.
 const qn = readJSONL(path.join(DIR.reports, "quarantine.jsonl")).length;
-add("quarantine 비어 있음", qn === 0, qn ? `${qn}건 — reports/quarantine.jsonl` : "");
+add("quarantine (누적 이력, 참고용)", qn === 0 ? true : null,
+    qn ? `${qn}건 기록 — 재실행으로 해결된 건 포함. 완결 여부는 위 게이트로 판단` : "");
 
 // ---------------------------------------------------------------------------
 const fail = checks.filter((c) => c.ok === "fail");

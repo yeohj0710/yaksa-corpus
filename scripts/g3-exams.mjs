@@ -79,9 +79,12 @@ async function extractPages(rows, { schema, system, prompt, tag, maxTokens }) {
   return runJobs({ goal: `g3-${tag}`, jobs, concurrency: CONCURRENCY, force });
 }
 
+// 약물치료학 사례형은 지문·선지가 길어 한 쪽에서 출력이 12,000 토큰을 넘습니다.
+// 잘리면 llm.mjs 가 던지므로 조용히 손실되지는 않지만, 넉넉히 잡아야 재실행이 없습니다.
+// 실제 과금은 생성된 토큰만큼이라 상한을 올려도 비용은 늘지 않습니다.
 console.log("\n[1/3] 문제지 전사");
 const rq = await extractPages(papers, {
-  schema: Q_SCHEMA, system: EXAM_SYSTEM, prompt: EXAM_PROMPT, tag: "q", maxTokens: 12000,
+  schema: Q_SCHEMA, system: EXAM_SYSTEM, prompt: EXAM_PROMPT, tag: "q", maxTokens: 32000,
 });
 
 console.log("[2/3] 정답지 전사");

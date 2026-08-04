@@ -79,23 +79,50 @@ function sha16(file, cap = 8 * 1024 * 1024) {
   });
 }
 
-function classify(text) {
+/**
+ * 이 코퍼스에 정상적으로 나올 수 있는 문자만 허용합니다.
+ * 깨진 인코딩은 그리스확장·데바나가리·구자라트·PUA 등 온갖 대역으로 흩어지므로,
+ * 나쁜 대역을 열거하는 것보다 좋은 대역만 통과시키는 쪽이 훨씬 안전합니다.
+ */
+function expected(o) {
+  return (o >= 0x0020 && o <= 0x024f)          // ASCII + 라틴 확장
+      || (o >= 0xac00 && o <= 0xd7a3)          // 한글 음절
+      || (o >= 0x4e00 && o <= 0x9fff)          // 한자
+      || (o >= 0x0370 && o <= 0x03ff)          // 그리스 (α, β …)
+      || (o >= 0x2000 && o <= 0x22ff)          // 일반 구두점·화살표·수학
+      || (o >= 0x2460 && o <= 0x24ff)          // ①②③
+      || (o >= 0x3000 && o <= 0x303f)          // CJK 구두점
+      || (o >= 0xff00 && o <= 0xffef);         // 전각
+}
+
+/** 한 쪽 단위 판정. 문서 단위로 뭉뚱그리면 표지만 멀쩡한 파일을 놓칩니다. */
+function classifyPage(text) {
   const t = text.replace(/\s+/g, "");
-  if (t.length < 160) return { kind: "SCAN", chars: t.length };
-  let hangul = 0, exotic = 0, common = 0;
+  if (t.length < 60) return "EMPTY";
+  let hangul = 0, common = 0, odd = 0;
   for (const c of t) {
     const o = c.codePointAt(0);
     if (o >= 0xac00 && o <= 0xd7a3) { hangul++; if (COMMON.has(c)) common++; }
-    else if ((o >= 0x0400 && o <= 0x058f) || (o >= 0x0600 && o <= 0x0dff) ||
-             (o >= 0x1100 && o <= 0x11ff) || (o >= 0xe000 && o <= 0xf8ff)) exotic++;
+    else if (!expected(o)) odd++;
   }
-  if (exotic > Math.max(20, t.length * 0.10)) return { kind: "MOJIBAKE", chars: t.length };
-  if (hangul >= 20) {
-    const ratio = common / hangul;
-    return { kind: ratio > 0.10 ? "CLEAN" : "MOJIBAKE", chars: t.length, common: +ratio.toFixed(3) };
-  }
+  if (odd > Math.max(10, t.length * 0.05)) return "MOJIBAKE";
+  if (hangul >= 20) return common / hangul > 0.10 ? "CLEAN" : "MOJIBAKE";
   // 한글이 거의 없는데 글자는 많음 → Distiller 계열의 ASCII 영역 깨짐
-  return { kind: "MOJIBAKE", chars: t.length };
+  return "MOJIBAKE";
+}
+
+/**
+ * 문서 판정. 쪽마다 따로 보고 **가장 나쁜 쪽**을 따릅니다.
+ * 한 쪽이라도 깨져 있으면 pdftotext 로 보내면 안 됩니다. 그 쪽 L1 이 통째로 쓰레기가 됩니다.
+ */
+function classify(pageTexts) {
+  const kinds = pageTexts.map(classifyPage);
+  const real = kinds.filter((k) => k !== "EMPTY");
+  if (!real.length) return { kind: "SCAN", pageKinds: kinds };
+  if (real.includes("MOJIBAKE")) return { kind: "MOJIBAKE", pageKinds: kinds };
+  // 본문이 거의 비어 있고 몇 쪽만 글자가 있으면 스캔으로 봅니다
+  if (real.length < kinds.length / 2) return { kind: "SCAN", pageKinds: kinds };
+  return { kind: "CLEAN", pageKinds: kinds };
 }
 
 function route(row) {
@@ -158,12 +185,16 @@ await runJobs({
       const hit = cache[r.content_sha];
       if (hit) { Object.assign(r, hit); return; }
       const info = await pdfInfo(r._abs);
-      let text = "";
+      const texts = [];
       if (info.pages > 0) {
-        const idx = [...new Set([1, Math.max(1, info.pages >> 1), info.pages])];
-        for (const p of idx) text += await pdfToText(r._abs, p, { layout: false }).catch(() => "");
+        // 최대 8쪽을 고르게 표본. 표지만 멀쩡한 혼합 인코딩 문서를 잡아내려면 3쪽으로는 부족합니다.
+        const n = Math.min(8, info.pages);
+        const idx = [...new Set(
+          Array.from({ length: n }, (_, i) => 1 + Math.round((i * (info.pages - 1)) / Math.max(1, n - 1))),
+        )];
+        for (const p of idx) texts.push(await pdfToText(r._abs, p, { layout: false }).catch(() => ""));
       }
-      const c = classify(text);
+      const c = classify(texts);
       const probe = { pages: info.pages, producer: info.producer.slice(0, 45), text_layer: c.kind };
       cache[r.content_sha] = probe;
       Object.assign(r, probe);

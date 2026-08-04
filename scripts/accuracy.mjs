@@ -8,8 +8,16 @@
  *   node scripts/accuracy.mjs --n 40
  *
  * 산출: reports/accuracy.md
- * 한계: 비전은 마크다운, pdftotext 는 평문이라 서식 차이를 정규화한 뒤 비교합니다.
- *       표·2단 조판은 읽는 순서가 달라 실제보다 오차가 크게 잡힐 수 있습니다.
+ *
+ * 지표를 두 가지로 봅니다.
+ *
+ *  - token_recall  : 정답지 토큰 중 비전 출력에 남은 비율. **이게 주 지표입니다.**
+ *                    읽는 순서와 무관해서 표·2단 조판에서도 내용 보존을 제대로 잽니다.
+ *  - token_precision: 비전 출력 토큰 중 정답지에 있는 비율. 없는 말을 지어냈는지 봅니다.
+ *                    표 골격(`|`, 머리행)이나 [FIGURE] 설명이 붙으면 자연히 내려갑니다.
+ *  - cer           : 문자 편집거리. 참고용으로만 둡니다.
+ *                    pdftotext -layout 은 표 셀을 뒤섞어 읽어서, 비전이 표를 **정확히**
+ *                    복원해도 CER 이 50%를 넘습니다. 이 지표로 품질을 판단하면 안 됩니다.
  */
 import path from "node:path";
 import { DIR, CONCURRENCY, LLM } from "../lib/config.mjs";
@@ -31,6 +39,35 @@ function normalize(s) {
     .replace(/[*#`|>_~\-–—\[\]()]/g, "")
     .replace(/\s+/g, "")
     .toLowerCase();
+}
+
+/**
+ * 내용 토큰. 한글 2자 이상 덩어리와 영숫자 2자 이상을 뽑습니다.
+ * 순서에 좌우되지 않으므로 표를 어느 방향으로 읽든 같은 집합이 나옵니다.
+ */
+function tokens(s) {
+  // 공백까지 지운 뒤 문자 3-gram 을 씁니다.
+  // 단어 단위로 자르면 pdftotext -layout 이 단 경계에서 넣는 공백 때문에
+  // 같은 내용이 다른 토큰으로 쪼개져 실제보다 나쁘게 잡힙니다.
+  const cleaned = s
+    .replace(/\[FIGURE:[^\]]*\]/g, " ")
+    .replace(/\[UNREADABLE\]/g, " ")
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/[|*#`>_~\-–—\[\]()]/g, " ")
+    .replace(/\s+/g, "")
+    .toLowerCase();
+  const g = new Set();
+  for (let i = 0; i + 3 <= cleaned.length; i++) g.add(cleaned.slice(i, i + 3));
+  return g;
+}
+
+function overlap(truth, got) {
+  if (!truth.size) return { recall: 1, precision: got.size ? 0 : 1 };
+  let hit = 0;
+  for (const t of truth) if (got.has(t)) hit++;
+  let back = 0;
+  for (const g of got) if (truth.has(g)) back++;
+  return { recall: hit / truth.size, precision: got.size ? back / got.size : 0 };
 }
 
 /** 편집거리. 행 하나만 굴려서 메모리를 아낍니다. */
@@ -77,10 +114,17 @@ await runJobs({
           imageBase64: pngBase64(png), maxTokens: 8000,
         });
         const a = normalize(truth), b = normalize(got);
+        const tt = tokens(truth), tg = tokens(got);
+        const { recall, precision } = overlap(tt, tg);
+        // 정답지에 있는데 비전이 놓친 토큰. 실제 오독을 눈으로 보는 용도입니다.
+        const missed = [...tt].filter((t) => !tg.has(t)).slice(0, 12);
         writeJSON(out, {
           sha: r.content_sha, page, subject: r.subject_key, type: r.material_type,
           truthLen: a.length, gotLen: b.length,
           distance: a.length || b.length ? levenshtein(a, b) : 0,
+          truthTokens: tt.size, gotTokens: tg.size,
+          recall: +recall.toFixed(4), precision: +precision.toFixed(4),
+          missed,
         });
         return true;
       },
@@ -93,33 +137,46 @@ for (const { r, page } of picks) {
   if (d) results.push(d);
 }
 
-const usable = results.filter((d) => d.truthLen >= 100);
-const cer = usable.map((d) => d.distance / Math.max(d.truthLen, 1));
-const mean = cer.length ? cer.reduce((a, b) => a + b, 0) / cer.length : 0;
-const sorted = [...cer].sort((a, b) => a - b);
-const med = sorted.length ? sorted[sorted.length >> 1] : 0;
-const p90 = sorted.length ? sorted[Math.floor(sorted.length * 0.9)] : 0;
-const worst = [...usable].sort((a, b) => b.distance / b.truthLen - a.distance / a.truthLen).slice(0, 5);
+const usable = results.filter((d) => d.truthLen >= 100 && d.recall != null);
+const stat = (arr) => {
+  const s = [...arr].sort((a, b) => a - b);
+  return {
+    mean: s.length ? s.reduce((a, b) => a + b, 0) / s.length : 0,
+    med: s.length ? s[s.length >> 1] : 0,
+    p10: s.length ? s[Math.floor(s.length * 0.1)] : 0,
+  };
+};
+const R = stat(usable.map((d) => d.recall));
+const P = stat(usable.map((d) => d.precision));
+const C = stat(usable.map((d) => d.distance / Math.max(d.truthLen, 1)));
+const worst = [...usable].sort((a, b) => a.recall - b.recall).slice(0, 6);
 
-const pct = (x) => `${(x * 100).toFixed(2)}%`;
+const pct = (x) => `${(x * 100).toFixed(1)}%`;
 const u = usageReport();
 writeReport("accuracy", {
   "요약": {
-    "표본 쪽": results.length, "유효 표본(정답 100자 이상)": usable.length,
-    "평균 문자오차율(CER)": pct(mean), "중앙값": pct(med), "90분위": pct(p90),
-    "추정 정확도": pct(1 - mean),
+    "표본 쪽": results.length, "유효 표본": usable.length,
+    "토큰 재현율 평균 (주 지표)": pct(R.mean), "중앙값": pct(R.med), "하위10%": pct(R.p10),
+    "토큰 정밀도 평균": pct(P.mean),
+    "문자오차율 CER 평균 (참고용)": pct(C.mean),
     "LLM 호출": u.calls, "출력 토큰": u.completionTokens,
   },
-  "해석": [
-    `- 이 오차율은 정답지가 없는 vision 5,383쪽에 대한 신뢰도 추정치입니다.`,
-    `- CER 5% 이상이면 프롬프트나 해상도(RENDER_DPI)를 손봐야 합니다.`,
-    `- 표·2단 조판은 읽는 순서 차이로 실제보다 나쁘게 잡힙니다. 아래 최악 표본을 눈으로 확인하세요.`,
+  "지표 읽는 법": [
+    "- **토큰 재현율**이 주 지표입니다. 정답지 토큰이 비전 출력에 얼마나 남았는지를 봅니다.",
+    "  읽는 순서와 무관해서 표·2단 조판에서도 내용 보존을 제대로 잽니다.",
+    "  이 값이 정답지 없는 vision 5,383쪽의 신뢰도 추정치입니다.",
+    "- **정밀도**는 비전이 없는 말을 붙였는지 봅니다. 표 골격이나 [FIGURE] 설명 때문에",
+    "  자연히 100%가 되지 않습니다. 급격히 낮으면 환각을 의심합니다.",
+    "- **CER 은 품질 판단에 쓰지 마세요.** `pdftotext -layout` 이 표 셀을 뒤섞어 읽기 때문에,",
+    "  비전이 표를 정확히 복원해도 50%를 넘깁니다. 정답지 쪽이 틀린 경우입니다.",
+    "- 아래 '놓친 토큰'을 눈으로 보세요. 실제 오독은 여기서 드러납니다.",
   ],
-  "최악 표본": worst.length
-    ? ["| 과목 | 종류 | 쪽 | 정답 길이 | CER |", "|---|---|---:|---:|---:|",
-       ...worst.map((d) => `| ${d.subject} | ${d.type} | ${d.page} | ${d.truthLen} | ${pct(d.distance / d.truthLen)} |`)]
+  "재현율 낮은 표본": worst.length
+    ? ["| 과목 | 종류 | 쪽 | 재현율 | 정밀도 | 놓친 토큰 |", "|---|---|---:|---:|---:|---|",
+       ...worst.map((d) => `| ${d.subject} | ${d.type} | ${d.page} | ${pct(d.recall)} | ${pct(d.precision)} | ${(d.missed ?? []).slice(0, 6).join(", ")} |`)]
     : ["없음"],
 });
 
-console.log(`\n평균 CER ${pct(mean)} · 중앙값 ${pct(med)} · 90분위 ${pct(p90)}`);
-console.log(`추정 전사 정확도 ${pct(1 - mean)}`);
+console.log(`\n토큰 재현율  평균 ${pct(R.mean)} · 중앙값 ${pct(R.med)} · 하위10% ${pct(R.p10)}`);
+console.log(`토큰 정밀도  평균 ${pct(P.mean)}`);
+console.log(`CER(참고)    평균 ${pct(C.mean)}  ← 표 읽는 순서 때문에 과대평가됩니다`);
