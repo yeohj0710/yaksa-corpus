@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "최종답안 표 추출 결과 (한 페이지분)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["answers"],
+  "properties": {
+    "answers": {
+      "type": "array",
+      "description": "정답표에서 읽은 (교시, 번호, 정답) 쌍 전부",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["session", "number", "answer", "area_label"],
+        "properties": {
+          "session": { "type": "integer", "description": "교시 1~4" },
+          "number": { "type": "integer", "description": "문제 번호" },
+          "answer": {
+            "type": "integer",
+            "description": "정답 번호 1~5. 전항정답·복수정답이면 0 을 쓰고 note 없이 둡니다"
+          },
+          "area_label": {
+            "type": "string",
+            "description": "표의 과목 칸 문자열 그대로. 예: 생명약학, 산업약학, 임상·실무약학, 보건·의약 관계 법규"
+          }
+        }
+      }
+    }
+  }
+}

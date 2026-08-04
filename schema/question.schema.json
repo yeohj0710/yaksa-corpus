@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "기출 문항 추출 결과 (한 페이지분)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["page_questions"],
+  "properties": {
+    "page_questions": {
+      "type": "array",
+      "description": "이 페이지에 온전히 보이는 문항만. 잘린 문항은 넣지 않습니다.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["number", "stem", "stem_box", "options", "figure_withheld", "has_figure"],
+        "properties": {
+          "number": { "type": "integer", "description": "문제 번호" },
+          "stem": { "type": "string", "description": "발문. 원문 그대로" },
+          "stem_box": {
+            "type": ["string", "null"],
+            "description": "발문 아래 네모 박스 안 내용. 없으면 null"
+          },
+          "options": {
+            "type": "array",
+            "description": "선지. 반드시 5개",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["n", "text"],
+              "properties": {
+                "n": { "type": "integer" },
+                "text": { "type": "string" }
+              }
+            }
+          },
+          "figure_withheld": {
+            "type": "boolean",
+            "description": "<자료(비공개)> 표시가 있으면 true"
+          },
+          "has_figure": {
+            "type": "boolean",
+            "description": "그림·구조식·그래프·표가 문항에 포함되면 true"
+          }
+        }
+      }
+    }
+  }
+}

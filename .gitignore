@@ -1,0 +1,16 @@
+# 원본 파생물은 절대 추적하지 않습니다. 전부 저작물입니다.
+data/
+render/
+l1/
+l2/
+.env
+.env.local
+
+# 리포트는 수치만 남기므로 추적합니다. 단 원문이 섞이는 파일은 제외합니다.
+reports/*.jsonl
+reports/samples/
+
+node_modules/
+*.log
+.DS_Store
+Thumbs.db

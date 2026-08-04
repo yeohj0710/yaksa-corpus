@@ -1,0 +1,19 @@
+{
+  "name": "yaksa-corpus",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "약사 국가고시 자료 데이터화 파이프라인",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "g0": "node scripts/g0-manifest.mjs",
+    "g1": "node scripts/g1-render.mjs",
+    "g2": "node scripts/g2-guide.mjs",
+    "g3": "node scripts/g3-exams.mjs",
+    "g4": "node scripts/g4-cards.mjs",
+    "g5": "node scripts/g5-l1.mjs",
+    "verify": "node scripts/verify.mjs",
+    "accuracy": "node scripts/accuracy.mjs",
+    "status": "node scripts/status.mjs"
+  }
+}

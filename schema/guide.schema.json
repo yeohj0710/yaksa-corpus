@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "과목 공부가이드 / D등급 리스트 구조화",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["study_order", "unit_priority", "recommended_materials", "notes"],
+  "properties": {
+    "study_order": {
+      "type": "array",
+      "description": "가이드가 제시한 학습 순서. 자료 이름 그대로",
+      "items": { "type": "string" }
+    },
+    "unit_priority": {
+      "type": "array",
+      "description": "단원 중요도. 가이드에 순위·비중이 적혀 있을 때만 채웁니다",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["unit", "rank", "note"],
+        "properties": {
+          "unit": { "type": "string" },
+          "rank": { "type": "integer", "description": "1 이 가장 중요" },
+          "note": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "recommended_materials": {
+      "type": "array",
+      "description": "D등급 리스트의 추천 자료 행",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "category", "post_no", "description"],
+        "properties": {
+          "title": { "type": "string" },
+          "category": { "type": ["string", "null"], "description": "주교재/부교재/문제집 등" },
+          "post_no": { "type": ["string", "null"], "description": "게시번호" },
+          "description": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "description": "그 외 공부법 지침. 원문 문장 그대로",
+      "items": { "type": "string" }
+    }
+  }
+}
