@@ -43,7 +43,8 @@ const res = await runJobs({
         }
         const data = await vision({
           model: LLM.struct, system: GUIDE_SYSTEM, prompt: GUIDE_PROMPT,
-          imagesBase64: imgs, schema: SCHEMA, schemaName: "guide", maxTokens: 16000,
+          imagesBase64: imgs, schema: SCHEMA, schemaName: "guide",
+          promptCacheKey: "yaksa-guide-v1", maxTokens: 16000,
         });
         writeJSON(out, { subject_key: d.subject_key, material_type: d.material_type,
                          source_key: d.source_key, source_sha: d.content_sha, ...data });

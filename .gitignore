@@ -9,6 +9,7 @@ l2/
 # 리포트는 수치만 남기므로 추적합니다. 단 원문이 섞이는 파일은 제외합니다.
 reports/*.jsonl
 reports/samples/
+reports/run-all.lock
 
 node_modules/
 *.log

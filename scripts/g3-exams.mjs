@@ -68,7 +68,7 @@ async function extractPages(rows, { schema, system, prompt, tag, maxTokens }) {
           const data = await vision({
             model: LLM.vision, system, prompt,
             imageBase64: pngBase64(png), schema,
-            schemaName: tag, maxTokens,
+            schemaName: tag, promptCacheKey: `yaksa-exam-${tag}-v1`, maxTokens,
           });
           writeJSON(out, { row: row.path, round: row.round, session: row.session, page, ...data });
           return true;

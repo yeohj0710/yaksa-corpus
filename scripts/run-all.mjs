@@ -14,7 +14,7 @@
  *  - 진행 상황은 reports/run-all.log 에 남습니다.
  */
 import { spawn } from "node:child_process";
-import { appendFileSync } from "node:fs";
+import { appendFileSync, closeSync, openSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { DIR, SUBJECTS } from "../lib/config.mjs";
 import { readJSONL, ensureDir, arg } from "../lib/jobs.mjs";
@@ -27,10 +27,48 @@ const PRICE_OUT = Number(process.env.PRICE_OUT ?? 1.20);
 
 ensureDir(DIR.reports);
 const LOG = path.join(DIR.reports, "run-all.log");
+const LOCK = path.join(DIR.reports, "run-all.lock");
 function log(line) {
   const s = `[${new Date().toISOString()}] ${line}`;
   console.log(s);
   try { appendFileSync(LOG, s + "\n", "utf8"); } catch {}
+}
+
+let lockFd = null;
+function pidIsAlive(pid) {
+  try { process.kill(Number(pid), 0); return true; }
+  catch (err) { return err.code === "EPERM"; }
+}
+
+function writeLock() {
+  const meta = JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString(), argv: process.argv.slice(2) }) + "\n";
+  lockFd = openSync(LOCK, "wx");
+  writeFileSync(lockFd, meta, "utf8");
+}
+
+function releaseRunLock() {
+  if (lockFd === null) return;
+  try { closeSync(lockFd); } catch {}
+  lockFd = null;
+  try { unlinkSync(LOCK); } catch {}
+}
+
+function acquireRunLock() {
+  try {
+    writeLock();
+  } catch (err) {
+    if (err.code !== "EEXIST") throw err;
+    let old = null;
+    try { old = JSON.parse(readFileSync(LOCK, "utf8")); } catch {}
+    if (old?.pid && pidIsAlive(old.pid)) {
+      throw new Error(`이미 실행 중인 run-all이 있습니다(pid ${old.pid}, ${old.startedAt ?? "시작 시각 미상"}). 중복 실행을 중단합니다.`);
+    }
+    try { unlinkSync(LOCK); } catch (removeErr) {
+      throw new Error(`오래된 run-all 잠금을 정리하지 못했습니다: ${removeErr.message}`);
+    }
+    writeLock();
+  }
+  process.once("exit", releaseRunLock);
 }
 
 function spentUSD() {
@@ -43,7 +81,11 @@ function spentUSD() {
 
 function run(args) {
   return new Promise((resolve) => {
-    const p = spawn(process.execPath, args, { stdio: "inherit", cwd: path.join(DIR.reports, "..") });
+    const p = spawn(process.execPath, args, {
+      stdio: "inherit",
+      cwd: path.join(DIR.reports, ".."),
+      env: { ...process.env, LLM_RUN_LIMIT_USD: String(LIMIT_USD) },
+    });
     p.on("close", (code) => resolve(code ?? 1));
   });
 }
@@ -74,6 +116,13 @@ if (DRY) {
   console.log(`실행할 단계 ${stages.length}개 (비용 상한 $${LIMIT_USD})`);
   for (const s of stages) console.log(`  ${s.costly ? "$" : " "} ${s.id.padEnd(20)} ${s.desc}`);
   process.exit(0);
+}
+
+try {
+  acquireRunLock();
+} catch (err) {
+  console.error(`run-all 잠금 실패: ${err.message}`);
+  process.exit(2);
 }
 
 log(`시작 — 단계 ${stages.length}개, 비용 상한 $${LIMIT_USD}`);

@@ -69,7 +69,8 @@ for (const r of rows) {
           // 잘리면 llm.mjs 가 던지므로 손실되진 않지만, 넉넉히 잡아야 재실행이 없습니다.
           body = await vision({
             model: LLM.vision, system: TRANSCRIBE_SYSTEM, prompt: TRANSCRIBE_PROMPT,
-            imageBase64: pngBase64(png), tag: `l1-${r.subject_key}`, maxTokens: 24000,
+            imageBase64: pngBase64(png), tag: `l1-${r.subject_key}`,
+            promptCacheKey: "yaksa-l1-transcribe-v1", maxTokens: 32000,
           });
         }
         ensureDir(dir);
