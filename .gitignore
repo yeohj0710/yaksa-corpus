@@ -11,6 +11,11 @@ reports/*.jsonl
 reports/samples/
 reports/run-all.lock
 
+# 일괄 수정 전 원본. l1 원문이 그대로 들어갑니다.
+backups/
+# 처리 로그. 자료명과 진행 상태가 섞입니다.
+logs/
+
 node_modules/
 *.log
 .DS_Store

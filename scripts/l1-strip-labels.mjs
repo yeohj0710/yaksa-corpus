@@ -2,9 +2,9 @@
  * L1 본문 첫 줄에 잘못 누출된 레이아웃 판별 라벨을 제거합니다.
  * 기본 실행은 대상 목록만 출력합니다. 확인 후 --apply로 실제 파일을 수정합니다.
  */
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 import path from "node:path";
-import { DIR } from "../lib/config.mjs";
+import { DIR, REPO } from "../lib/config.mjs";
 
 const LABELS = new Set([
   "C. 표",
@@ -54,9 +54,16 @@ if (targets.length !== 153) {
   throw new Error(`기대 대상 153건, 실제 ${targets.length}건. 수정하지 않습니다.`);
 }
 
+// l1/ 은 gitignore 라 되돌릴 git 안전망이 없습니다. 덮어쓰기 전에 원본을 남깁니다.
+// reports/ 는 추적 대상이므로 원문이 담기는 백업은 gitignore 된 backups/ 로 뺍니다.
+const backup = path.join(REPO, "backups", "l1-strip-labels-backup");
+mkdirSync(backup, { recursive: true });
+
 for (const target of targets) {
+  copyFileSync(target.file, path.join(backup, path.relative(DIR.l1, target.file).replace(/[\\/]/g, "__")));
   const lines = readFileSync(target.file, "utf8").split(/\r?\n/);
   lines.splice(target.index, 1);
   writeFileSync(target.file, lines.join("\n"), "utf8");
 }
 console.log(`제거 완료 ${targets.length}건`);
+console.log(`원본 백업: ${path.relative(process.cwd(), backup)}`);

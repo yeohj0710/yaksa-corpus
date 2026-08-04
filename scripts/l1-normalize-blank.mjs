@@ -12,7 +12,7 @@
  */
 import { existsSync, readFileSync, readdirSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 import path from "node:path";
-import { DIR } from "../lib/config.mjs";
+import { DIR, REPO } from "../lib/config.mjs";
 
 const apply = process.argv.includes("--apply");
 
@@ -55,7 +55,8 @@ if (!apply) {
   process.exit(0);
 }
 
-const backup = path.join(DIR.reports, "l1-normalize-blank-backup");
+// reports/ 는 git 추적 대상입니다. 원문이 담기는 백업은 gitignore 된 backups/ 로 뺍니다.
+const backup = path.join(REPO, "backups", "l1-normalize-blank-backup");
 mkdirSync(backup, { recursive: true });
 
 for (const t of targets) {

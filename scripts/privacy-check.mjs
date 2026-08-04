@@ -21,13 +21,30 @@ const RULES = [
   { id: "api-key",      re: /\b(?:sk-[A-Za-z0-9_-]{20,}|gho_[A-Za-z0-9]{20,}|AIza[A-Za-z0-9_-]{20,})/, desc: "자격증명" },
   { id: "drive-id",     re: /\b[A-Za-z0-9_-]{28,44}\b(?=.*(?:driveFileId|drive_file_id|fileId))/, desc: "드라이브 파일 ID" },
   { id: "study-ext",    re: /\.(?:pdf|mp3|m4a|xlsx|goodnotes)\b/i,      desc: "학습자료 파일", pathOnly: true },
-  { id: "output-dir",   re: /^(?:data|render|l1|l2)\//,                 desc: "추출물 디렉터리", pathOnly: true },
+  { id: "output-dir",   re: /^(?:data|render|l1|l2|backups|logs)\//,    desc: "추출물 디렉터리", pathOnly: true },
+  // 디렉터리 이름을 열거하는 방식은 새 폴더가 생기면 뚫립니다(backups/ 로 실제로 뚫렸음).
+  // L1 프론트매터는 어느 경로에 있든 이 서명을 갖고 있으므로 내용으로 잡습니다.
+  { id: "l1-content",   re: /^---\r?\n(?:[a-z_]+:.*\r?\n)*?sha:\s*[0-9a-f]{16}\r?\n/m,
+                        desc: "L1 전사 원문(프론트매터 서명)" },
+  { id: "source-key",   re: /source_key:\s*\S+\/\d-\d\./,               desc: "원본 자료 경로" },
 ];
+
+/** 추적 목록에 마크다운·JSONL 이 대량으로 들어오면 산출물이 섞였을 가능성이 큽니다. */
+const BULK_LIMIT = 60;
 
 const ALLOW = [
   ".env.example",       // 빈 값만 들어 있음
   "scripts/privacy-check.mjs", // 이 파일이 패턴 자체를 담고 있음
 ];
+
+/**
+ * 규칙별 예외. 문서에는 프론트매터·source_key 예시가 들어갈 수밖에 없습니다.
+ * 경로 규칙(output-dir 등)은 예외 없이 적용합니다.
+ */
+const ALLOW_BY_RULE = {
+  "l1-content": ["AGENTS.md", "GOALS.md", "README.md", "scripts/agent-next.mjs", "scripts/g5-l1.mjs"],
+  "source-key": ["AGENTS.md", "GOALS.md", "README.md", "scripts/agent-next.mjs"],
+};
 
 function git(args) {
   return execFileSync("git", args, { cwd: REPO, encoding: "utf8", maxBuffer: 64 << 20 });
@@ -37,6 +54,7 @@ const violations = [];
 function scan(file, text, where) {
   if (ALLOW.includes(file)) return;
   for (const r of RULES) {
+    if (ALLOW_BY_RULE[r.id]?.includes(file)) continue;
     const target = r.pathOnly ? file : text;
     if (r.re.test(target)) violations.push({ rule: r.id, desc: r.desc, file, where });
   }
@@ -70,6 +88,12 @@ if (history) {
   for (const r of RULES.filter((x) => !x.pathOnly)) {
     if (r.re.test(blob)) violations.push({ rule: r.id, desc: r.desc, file: "(이력 어딘가)", where: "history" });
   }
+}
+
+// 개별 규칙을 다 통과해도, 추적 파일이 갑자기 불어나면 산출물이 섞인 것입니다.
+const bulk = tracked.filter((f) => /\.(md|jsonl|json)$/i.test(f) && !/^(schema|reports|docs)\//.test(f) && f !== "README.md" && f !== "AGENTS.md" && f !== "GOALS.md");
+if (bulk.length > BULK_LIMIT) {
+  violations.push({ rule: "bulk-tracked", desc: `문서 파일 ${bulk.length}개가 추적됨 (상한 ${BULK_LIMIT})`, file: bulk[0], where: "tracked" });
 }
 
 console.log(`추적 파일 ${tracked.length}개 검사${history ? " + 전체 이력" : ""}`);

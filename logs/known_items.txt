@@ -1,2 +1,0 @@
-# Exact processed-item ledger for the long-running yaksa-corpus goal.
-# Pipeline cache/status is authoritative; append checkpoints here after verified batches.
