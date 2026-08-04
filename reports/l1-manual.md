@@ -100,3 +100,93 @@
 - 정상 전사 대상 practice 문서는 모두 완료했다. `node scripts/l1-worklist.mjs`의 practice 잔여 70쪽은 `b9e8eaa0a7037280` 60쪽, `db47df285cf805c7` 3쪽, `e83369e34655a52c` 7쪽이며 모두 회전·판독 불가로 ledger에 기록했다.
 - practice worklist 잔여 70쪽 중 ledger 누락 0쪽.
 - 현재 전체 worklist 잔여: 5233쪽.
+
+## manufacturing 진행
+
+- manufacturing 과목 완료 점검: `node scripts/l1-normalize-blank.mjs --apply` 결과 `대상 0건`, `정규화 완료 0건`.
+- manufacturing 과목 spotcheck:
+
+```text
+표본 5쪽
+  manufacturing    5쪽
+
+열기: C:\dev\yaksa-corpus\reports\samples\spotcheck.html
+회전 보정본 표본: 0쪽
+```
+
+- manufacturing 정상 방향 전사 대상은 모두 완료했다. 제조 worklist 잔여 46쪽은 다음 문서 `aee19f136b544dca` 19쪽과 `ad67d70bc33d5eea` 27쪽이다.
+- manufacturing privacy-check: 추적 파일 50개 검사, 위반 없음.
+- manufacturing verify: 통과 24, 실패 0, 미실행 2. quarantine 900건은 누적 이력으로 게이트 실패가 아님.
+- `c67f339a6ac81cbc` p16 완료. 완제의약품·생약·생물의약품 품질관리, 안정성시험, 위해성 등급표와 CTD를 전사하고 원본에서 제제별 시험항목, 25℃, 1년째 3개월·이후 6개월, 1/2/3 등급 위해성, 색깔·맛 변질, CTD를 재대조했다.
+- `c67f339a6ac81cbc` p1~p16 완료. 16쪽 문서를 모두 한 쪽씩 전사하고 각 쪽 작성 후 원본 PNG에서 고유명사·질환명·약물명·숫자·수식·표를 재대조했다.
+- 현재 manufacturing worklist 잔여: 46쪽.
+- `c67f339a6ac81cbc` p15 완료. 액상·분말·동결건조 주사제 공정시험 표, 전도도·엔도톡신·무균·기밀도 등 검사 항목, 안연고제와 PAT를 전사하고 원본에서 Bubble point test, 등장도 X, Leakage Test, NIR, 스틱킹 확인과 시험 시기·빈도를 재대조했다.
+- `c67f339a6ac81cbc` p14 완료. 정제·캡슐제 공정별 검사 항목·시기 표와 혼합균일성·함습도·경도·마손도·치수·유동성 시험을 전사하고 원본에서 함수도·잔류용매·함량균일성, Friability tester/friabiliator, 100회전, micrometer·sliding caliper와 캡슐제 표를 재대조했다.
+- `c67f339a6ac81cbc` p13 완료. 출발원료물질 시료채취 n/p/r 계획과 표준품 종류·사용영역, 공통시험법 한도시험, 제약용수 종류·품질관리를 전사하고 원본에서 n=1+√N, p=0.4√N, r=1.5√N, ICRS/BPCRS/EPCRS/USPRS, 99.5%, TOC와 식염수(X) 표기를 재대조했다. p-계획의 원문 `평가가 좋고` 표기는 그대로 보존했다.
+- `c67f339a6ac81cbc` p12 완료. 자료의 통계분석, 중심경향성·산포도·모수/비모수 검정과 공정능력 Cp/Cpk 식·분포 그림·등급표를 전사하고 원본에서 n<25, n₁·n₂<25, Tukey/SNK/LSD/Bonferroni/Scheffe/Dunnet, USL/LSL, 6σ, UCL/LCL, 1.33·1·0.67과 그림 캡션을 재대조했다. 표에 보이는 `1 ≤ Ĉpk < 1` 표기는 추측으로 고치지 않고 그대로 보존했다.
+- `c67f339a6ac81cbc` p11 완료. 제2부 품질관리 개론, 품질 구성요인·QC/TQC·품질관리 체계·관리도와 ICH·PIC/S 동향을 전사하고 원본에서 D. A. Garvin, SQC/TQC, ±2s·±3s, 5%·0.3%, Q8/Q9/Q10, 11개, PIC/S, 2014년을 재대조했다.
+- `c67f339a6ac81cbc` p10 완료. 청정도 검체채취·Settling plates·아이솔레이터와 세척공정 오염 메커니즘·허용기준·안전성계수·독성 기반 잔류한도 계산을 전사하고 원본에서 80m²→9개소, 20개, 95%, 1/10⁶, IPA, CIP, 1,000, 10,000~100,000, NOEL/ADI/MACO/MBS/LDD를 재대조했다.
+- `c67f339a6ac81cbc` p9 완료. 제조용수·엔도톡신 관리, 공기조화 목적·구성·청정도 등급표와 청정실 측정·차압·검체채취를 전사하고 원본에서 80℃, TOC, LAL, HEPA, 0.5μm, Class 1A~3, 낙하균·부유균 수치와 cross-contamination을 재대조했다.
+- `c67f339a6ac81cbc` p8 완료. 고형제제 공정 변경인자·정제 제조공정과 동결건조 완제품 특성·잔류수분·복원·함량을 전사하고 원본에서 Wet Granulation/Milling, Tablet Compression, NIR, 2분, 2~8℃와 공정·완제품 시험 항목을 재대조했다.
+- `c67f339a6ac81cbc` p7 완료. 과산화수소 증기멸균 장점, 멸균필터 기공 크기별 용도, 무균여과와 필터 완전성 시험을 전사하고 원본에서 0.1~0.8μm, Bubble point, WIT, 60% IPA, 70 dyn/cm, 0.1m², 80%, 10⁷개와 식을 재대조했다. 원문에 보이는 `세공의 크기 가능`, `Brevunmonas diminita` 표기는 그대로 보존했다.
+- `c67f339a6ac81cbc` p6 완료. 미생물 사멸·D/Z/F/B 식, 무균제품 멸균법·지표미생물, 증기·건열·터널 멸균 밸리데이션을 전사하고 원본에서 F₀=8, F=12, 121℃, Z=10℃, ±0.5℃·±2.5℃·±15℃, 10~20개·3~5회, Bacillus 종명과 Brevunmonas diminita를 재대조했다.
+- `c67f339a6ac81cbc` p5 완료. 예측적 밸리데이션의 마스터 문서·제품개발과 회고적 밸리데이션 제품 선정 기준·제형별 공정조건 표를 전사하고 원본에서 Drug A/B/C/D, 20~30개, 3 뱃치, 1,000정, twin-shell, shellac, subcoating, grossing, smoothing과 표의 시험명을 재대조했다.
+- `c67f339a6ac81cbc` p4 완료. 제형별 중요공정 표와 시험방법 밸리데이션 실시경우·파라미터·재밸리데이션·생략 조건을 전사하고 원본에서 무균제제·고형제·액제·카타플라스마제, Robustness, 시험항목과 품질 특성 표를 재대조했다.
+- `c67f339a6ac81cbc` p2 완료. 제조시설 분리·구획·구분, 특수제제 작업소, 제조·품질관리 부서 책임과 GMP 기준서를 전사하고 원본에서 Air curtain, 페니실린·성호르몬·생물학적제제·세포독성 항암제, 제조번호·Lot와 이중 점검 항목을 대조했다.
+- `c67f339a6ac81cbc` p3 완료. 밸리데이션 용어, DQ/IQ/OQ/PQ, 예측적·회고적·동시적 밸리데이션, 재밸리데이션과 공정 밸리데이션 순서를 전사하고 원본에서 DQ/IQ/OQ/PQ, 100x, 20여 배치, 3개 제조단위, 2011, Verification 등 숫자·고유 표기를 대조했다.
+
+- `07a610d4a1f812b4` p1~p2 완료. 정상 방향 표를 한 쪽씩 전사하고 원본에서 자료명·게시번호·수치·기호를 재대조했다.
+- `2e1b148e0400d5a3` p1~p4 완료. 밀집 다단 페이지를 한 쪽씩 전사하고 원본에서 고유명사·수치·단위·수식·기호를 재대조했다. 판독이 불확실한 일부 문구는 p1·p3·p4에 `[UNREADABLE]`로 남겼다.
+- `30d25dc20749147d` p1~p3 완료. 제제·특수시험 표를 한 쪽씩 전사하고 원본에서 고유명사·질환명·약물명·수치·기호를 재대조했다. 판독이 불확실한 산소 플라스크 연소 문구는 p2에 `[UNREADABLE]`로 남겼다.
+- `52d33fe951a4b3b0` p1~p7 완료. 밀집 3단 조판을 한 쪽씩 전사하고 원본에서 공정명·시험법명·약어·수치·기호를 재대조했다. 판독이 불확실한 멸균 지표 미생물명과 품질 특성 설명은 p3·p4에 `[UNREADABLE]`로 남겼다.
+- `7a2c6010447cbdd0` p1 완료. 표와 고유명사·시험법명·약물명·수치를 원본과 재대조했다.
+- `7f83bd3061faeb3c` p1 완료. 2단 밀집 페이지를 한 쪽씩 전사하고 원본에서 CMC, PAI, SUPAC, TDDS, ADI/NOEL/LD50/SF/MACO/MBS/LDD, FAD/ISO 등 고유명사·약어·수치·수식을 재대조했다. 확신이 낮은 원문은 추측하지 않고 `[UNREADABLE]`로 남겼다.
+- `7f83bd3061faeb3c` p2 완료. 비교용출·멸균 밸리데이션·멸균 필터 표를 한 쪽씩 전사하고 원본에서 Ethylene oxide, peracetic acid, hydrogen peroxide, chlorine dioxide, Bacillus 종명, Escherichia coli, 0.1~0.8μm, F₀/F/Z/D 수치를 재대조했다.
+- `7f83bd3061faeb3c` p3 완료. 동결건조·미생물 위험군·ICH/PIC/S·QbD·정제 단위조작 표를 전사하고 원본에서 ICH, PIC/S, PDG, QTPP, CQA, CMA/CPP, DoE, PAT, 2~8℃, 90ft/min을 재대조했다. 소형 문구는 추측하지 않고 `[UNREADABLE]`로 남겼다.
+- `7f83bd3061faeb3c` p4 완료. 품질관리·불만관리·품질관리도·문서관리·대한민국약전·기술통계·추론통계 표와 그래프를 전사하고 원본에서 CL/UCL/LCL, ±2s/±3s, 약사법 제51조, ICH 용어, Q₁/Mₑ/Q₂, 1·2종 오류, z/t/ANOVA/Wilcoxon/Kruskal-Wallis를 재대조했다.
+- `7f83bd3061faeb3c` p5 완료. 실험계획법·공정능력지수·표준품·원료/자재·제약용수·고형제 공정관리 표를 전사하고 원본에서 Cp/Cpk, USL/LSL, p/n/r 계획, 99.5%, 100CFU, 0.25EU/mL, 2.1μS/cm, 10mL 기준, Karl Fischer, Friability tester와 100회전을 재대조했다.
+- `7f83bd3061faeb3c` p6 완료. 무균제·PAT·생약/국가출하승인·안정성·CTD·용해성·용기·일반/생물학적/화학적 시험법을 전사하고 원본에서 bubble point, NIR, 1년·3개월·6개월, 30℃/65% RH, 200~800nm, 600±50℃, 0.25EU/mL, 흡광도·선광도 수식을 재대조했다. 불확실한 시험약어·시약명은 `[UNREADABLE]`로 남겼다.
+- `7f83bd3061faeb3c` p7 완료. 적외부스펙트럼·크로마토그래피 용어·제제균일성시험법과 연습문제를 전사하고 원본에서 KBr/KCl, NaCl, ATR, S/N, RSD, 1.5, 25mg/25%, 함량균일성·질량편차 조건을 재대조했다.
+- 현재 manufacturing worklist 잔여: 85쪽.
+- 현재 manufacturing worklist 잔여: 84쪽.
+- 현재 manufacturing worklist 잔여: 83쪽.
+- 현재 manufacturing worklist 잔여: 82쪽.
+- 현재 manufacturing worklist 잔여: 81쪽.
+- 현재 manufacturing worklist 잔여: 80쪽.
+- 현재 manufacturing worklist 잔여: 79쪽.
+- `83d93d32744b5c73` p1 완료. 제1부 약전 각조 표를 한 쪽씩 전사하고 원본에서 retinol 0.3μg, 건조감량 8.0%, 100℃/8시간, 2ppm, 37±2℃, pH 3.5, 0.1mol/L, 50mL, 410nm, 0.16~0.19와 시험명을 재대조했다. 판독이 불확실한 유지시험 세부어는 `[UNREADABLE]`로 남겼다.
+- `83d93d32744b5c73` p2 완료. 제1부 약전 각조 표를 전사하고 원본에서 65%, 440 전분당화력단위, 37±0.5℃/10분, 11개정, 445nm, -128~-142, 1.5%, 0.20%, 4ppm, pH 4.5~8.0, 0.1M와 시험명을 재대조했다. 불확실한 유연물질·시약명은 `[UNREADABLE]`로 남겼다.
+- `83d93d32744b5c73` p3 완료. 제1부 약전 각조 표를 전사하고 원본에서 84~86%, 14~15%, 7.9%, 0.1%, 0.1mol/L, 37±0.5℃, 15분/20분, 2.00, 445nm, 0.10%, 0.5%, 1.2mL, 26 인슐린단위, 1.8kg, 0.27~1.08%, 14.5~16.5%를 재대조했다.
+- `83d93d32744b5c73` p4 완료. 제1부 약전 각조 표를 전사하고 원본에서 130~135℃, pH 4.0~5.5, 50mL/12mL, 3.5~6.5, 49~51℃, 95vol%, 비중 1.872~1.877과 시험명을 재대조했다. 불확실한 테트라사이클린 시험약어는 `[UNREADABLE]`로 남겼다.
+- `83d93d32744b5c73` p5 완료. 제2부 약전 각조 표를 전사하고 원본에서 3%, 1%, Pb/As/Hg/Cd, 10%, 24시간, 2mL/20mL, pH 5.0~7.5, 95.1~96.9vol%, 2.1μS/cm, 25μS/cm와 2015 추가 표기를 재대조했다.
+- 현재 manufacturing worklist 잔여: 78쪽.
+- 현재 manufacturing worklist 잔여: 77쪽.
+- 현재 manufacturing worklist 잔여: 76쪽.
+- 현재 manufacturing worklist 잔여: 75쪽.
+- `94db55c2d3799f71` p1 완료. 표지의 의약품 제조 품질 관리 제목, DS12Joo, 이화 12 정뿍, 4판 수정(17IJ) 표기와 그림을 원본과 대조했다.
+- 현재 manufacturing worklist 잔여: 73쪽.
+- 현재 manufacturing worklist 잔여: 74쪽.
+- `94db55c2d3799f71` p2 완료. GMP 적용범위·분리/구획/구분·제조 및 품질관리 책임·기준서·제조단위/제조번호 정의를 한 쪽씩 전사하고 원본에서 KGMP, 제제명, 책임부서, Lot, 주요 기준·기호를 재대조했다.
+- 현재 manufacturing worklist 잔여: 72쪽.
+- `94db55c2d3799f71` p3 완료. 밸리데이션·적격성평가 표, 공정 밸리데이션 우선순위, CMC, 회고적 밸리데이션, 압축정제 공정표를 전사하고 원본에서 DQ/IQ/OQ/PQ, PV, CMC, PAI, SUPAC, TDDS, Drug A/B, 시험항목·수치를 재대조했다.
+- 현재 manufacturing worklist 잔여: 71쪽.
+- `94db55c2d3799f71` p4 완료. 코팅정·연질캡슐·액제 공정, 시험방법 밸리데이션 파라미터, 생략 조건, 공정 밸리데이션 종류 표를 전사하고 원본에서 Drug B/C/D, 1,000정, 시험법 파라미터, 100x·10~30개, 재밸리데이션 조건을 재대조했다.
+- 현재 manufacturing worklist 잔여: 70쪽.
+- `94db55c2d3799f71` p5 완료. 공정 밸리데이션 실시순서·제형별 중요공정 표·마스터문서·제품개발·고형제 공정시험·멸균 밸리데이션 식과 지표를 전사하고 원본에서 1,000정, 3 뱃치, 100x, D/Z/F/B 수식, EO·과산화수소·이산화염소를 재대조했다.
+- 현재 manufacturing worklist 잔여: 69쪽.
+- `94db55c2d3799f71` p6 완료. 생물학적 지표 표, 증기·건열·과산화수소 멸균 밸리데이션, 멸균 필터 완전성 시험을 전사하고 원본에서 Bacillus/Escherichia 표기, F₀·F·Z·D, 0.1~0.8μm, Bubble point·WIT 수식과 시험조건을 재대조했다.
+- 현재 manufacturing worklist 잔여: 68쪽.
+- `94db55c2d3799f71` p7 완료. 공기조화 청정도 등급표·검체채취·아이솔레이터, 제조용수 종류·관리와 엔도톡신 항목을 전사하고 원본에서 Class 1A~3 수치, 0.5μm·95%·20개·81m²/9개소, 80℃·TOC·LAL 표기를 재대조했다.
+- 현재 manufacturing worklist 잔여: 67쪽.
+- `94db55c2d3799f71` p8 완료. 동결건조 완제품 특성, 세척 오염 메커니즘·허용기준, 안전성 계수를 전사하고 원본에서 2분·2~8℃, IPA·멤브레인, 1/10⁶, 1,000·100,000~10,000 등 수치와 용어를 재대조했다.
+- 현재 manufacturing worklist 잔여: 66쪽.
+- `94db55c2d3799f71` p9 완료. 독성 기반 잔류한도 예시·ADI/NOEL/LD₅₀/MACO/MBS/LDD 표, 생물안전 위험군, 품질관리·품질관리도·ICH·PIC/S를 전사하고 원본에서 200kg·1,000mg, 0.0005, ±2s/±3s, 5%/0.3%, Q8/Q9/Q10, 2014년을 재대조했다.
+- 현재 manufacturing worklist 잔여: 65쪽.
+- `94db55c2d3799f71` p10 완료. 기술통계·모수/비모수 검정·Cp/Cpk 등급표, 시료채취 n/p/r 계획, 표준품·공통시험법·제약용수를 전사하고 원본에서 n<25, 99.5%, 0.5μm, 10,000~100,000, n=1+√N·p=0.4√N·r=1.5√N과 시험명을 재대조했다.
+- 현재 manufacturing worklist 잔여: 64쪽.
+- `94db55c2d3799f71` p11 완료. 고형제·무균제제 공정중 품질관리 표, 함량균일성·함습도·경도·마손도·유동성, 전도도·엔도톡신 검사와 반고형제 시험을 전사하고 원본에서 Friability tester, bubble point, pH·함량·비중/점도·기밀도·질량편차·불용성 이물/미립자 항목을 재대조했다.
+- 현재 manufacturing worklist 잔여: 63쪽.
+- `94db55c2d3799f71` p12 완료. PAT, 완제의약품·생약·생물의약품 품질관리, 약전 각조 시험항목, 안정성시험과 CTD를 전사하고 원본에서 NIR, 스틱킹, 주요 제형별 시험점, 80~86%·14~15%·7.9%·0.1%, 25℃·30℃/65%RH를 재대조했다. 아스피린의 소형 시약명은 판독 불확실하여 `[UNREADABLE]`로 남겼다.
+- 현재 manufacturing worklist 잔여: 62쪽.
+- `c67f339a6ac81cbc` p1 완료. GMP·밸리데이션 개요, PV 시행 이유·우선순위, CMC·공정 밸리데이션 종류를 전사하고 원본에서 1x·10x·100x, TDDS, PAI, SUPAC와 DQ/IQ/OQ/PQ를 재대조했다.
+- 현재 manufacturing worklist 잔여: 61쪽.
