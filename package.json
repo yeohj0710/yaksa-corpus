@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "description": "약사 국가고시 자료 데이터화 파이프라인",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "g0": "node scripts/g0-manifest.mjs",
     "g1": "node scripts/g1-render.mjs",
@@ -14,6 +16,8 @@
     "g5": "node scripts/g5-l1.mjs",
     "verify": "node scripts/verify.mjs",
     "accuracy": "node scripts/accuracy.mjs",
-    "status": "node scripts/status.mjs"
+    "status": "node scripts/status.mjs",
+    "privacy-check": "node scripts/privacy-check.mjs",
+    "privacy-check:history": "node scripts/privacy-check.mjs --history"
   }
 }
