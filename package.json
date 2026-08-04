@@ -14,6 +14,7 @@
     "g3": "node scripts/g3-exams.mjs",
     "g4": "node scripts/g4-cards.mjs",
     "g5": "node scripts/g5-l1.mjs",
+    "l1:worklist": "node scripts/l1-worklist.mjs",
     "verify": "node scripts/verify.mjs",
     "accuracy": "node scripts/accuracy.mjs",
     "status": "node scripts/status.mjs",
