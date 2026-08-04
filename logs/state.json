@@ -1,0 +1,15 @@
+{
+  "objective": "Complete GOALS.md from G-A through G-G in order",
+  "repo": "C:\\dev\\yaksa-corpus",
+  "current_stage": "G-A",
+  "status": "waiting_for_external_credential",
+  "initialized_at": "2026-08-04",
+  "last_action": "Rechecked on continuation: .env and process LLM_API_KEY are still empty; no further API retry started",
+  "next_action": "Restore LLM_API_KEY in .env or process environment, set LLM_ENABLE=1 for the authorized run, then resume from l1-pharmacology",
+  "completed_stages": ["rotation", "render", "l1-text", "l1-biochemistry", "l1-microbiology"],
+  "notes": [
+    "SOURCE_ROOT is read-only",
+    "Stages run sequentially",
+    "Do not alter data or gates to force numeric pass"
+  ]
+}

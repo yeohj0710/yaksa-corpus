@@ -29,21 +29,36 @@ npm run verify      # 게이트 전량
 
 ### 지금 방식 — 에이전트가 직접 전사
 
-렌더 캐시가 로컬에 전부 있습니다(빠진 문서 0개). 그 PNG 를 읽고 결과를 파일로 씁니다.
 유료 API 를 거치지 않아서 Codex 구독으로 커버됩니다.
+경로·자리수·프론트매터를 직접 맞추지 마세요. 스크립트가 알려줍니다.
 
-읽기: `render/{content_sha}/p-N.png` — 자리수가 문서마다 다릅니다(`p-1.png`, `p-01.png`).
-      하드코딩하지 말고 실제 목록을 읽으세요.
-쓰기: `l1/{content_sha}/p-NNNN.md` — 항상 4자리 0패딩.
+```bash
+npm run agent:next -- --n 20
+```
 
-프론트매터는 `scripts/g5-l1.mjs` 의 `frontMatter()` 와 키·순서가 같아야 합니다.
-값은 `data/manifest.json` 의 해당 행에서 가져옵니다
-(`content_sha`, `pages`, `source_key`, `subject_key`, `material_type`).
-전사 규칙은 `lib/prompts.mjs` 의 `TRANSCRIBE_SYSTEM`·`TRANSCRIBE_PROMPT` 를 그대로 따릅니다.
-이미 만든 2,473쪽과 문체·표 표기가 어긋나면 코퍼스가 망가집니다.
+출력에 쪽마다 이렇게 나옵니다.
 
-과목 단위로 진행하고 한 과목 끝날 때마다 커밋하세요.
-진행 기록은 `reports/l1-manual.md`.
+```
+읽기: render/{sha}/p-1.png        ← 실제 파일명(자리수 문서마다 다름)
+쓰기: l1/{sha}/p-0001.md          ← 항상 4자리 0패딩
+프론트매터: sha=… page=… pages_total=… source_key=… subject_key=… material_type=…
+```
+
+그 PNG 를 읽고, 같이 출력되는 전사 규칙(`lib/prompts.mjs` 의 `TRANSCRIBE_SYSTEM`)대로
+마크다운을 만들어 `쓰기:` 경로에 프론트매터와 함께 저장합니다.
+이미 만든 쪽들과 문체·표 표기가 어긋나면 코퍼스가 망가지니 규칙을 그대로 따릅니다.
+
+다 쓰면 검증합니다.
+
+```bash
+npm run agent:check
+```
+
+프론트매터 누락·sha/page 불일치·빈 본문·거부 응답을 잡아냅니다.
+문제 0 이면 다시 `agent:next`. 남은 쪽이 0 이 될 때까지 반복합니다.
+
+`agent:next` 는 필요한 PNG 만 그때그때 굽습니다(회전 보정 포함).
+과목 단위로 끝내려면 `--subject law` 를 붙이고, 한 과목 끝날 때마다 커밋하세요.
 
 눕혀진 문서 33개 804쪽이 있습니다. 이미지가 누워서 읽기 어려우면 **내용을 지어내지 마세요.**
 확인된 환각 사례가 있습니다. 그 쪽은 건너뛰고 `reports/l1-manual.md` 에
