@@ -16,8 +16,8 @@
 ## 작업 큐
 
 - `npm run l1:worklist`에서 기존 L1 파일이 없는 vision 페이지를 `(content_sha, page, subject_key)` JSONL로 출력함
-- 2026-08-04 현재 미작성 목록: 5,448쪽
-- pathophysiology 미작성 목록: 119쪽
+- 2026-08-04 현재 미작성 목록: 5,409쪽
+- pathophysiology 미작성 목록: 80쪽
 
 ## 레이아웃 라벨 정리
 
@@ -33,6 +33,7 @@
 
 ## pathophysiology 진행
 
-- 완료: `e7fa2477be5db8c4` 1쪽, `8e8a006f6c7b78e9` 1쪽, `21adb41fdbf303af` 12쪽, `28daf3d28a9376ce` 3쪽, `4c308ca701a62391` 26쪽
+- 완료: `e7fa2477be5db8c4` 1쪽, `8e8a006f6c7b78e9` 1쪽, `21adb41fdbf303af` 12쪽, `28daf3d28a9376ce` 3쪽, `4c308ca701a62391` 26쪽, `4cd1dad886d46d47` 39쪽
 - `21adb41fdbf303af`는 정상 방향 문서이며 12쪽 전부 작성함. 일부 워터마크·소형 그림 안 판독 불가 부분만 `[UNREADABLE]`로 표시함.
-- 현재 pathophysiology 미작성: 119쪽
+- `4cd1dad886d46d47`는 정상 방향 문서이며 39쪽 전부 작성함. 작은 표·도표에서 판독 불가한 부분은 `[UNREADABLE]`로 표시함.
+- 현재 pathophysiology 미작성: 80쪽
