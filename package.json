@@ -24,6 +24,7 @@
     "cost": "node scripts/cost.mjs",
     "run:all": "node scripts/run-all.mjs",
     "agent:next": "node scripts/agent-next.mjs",
-    "agent:check": "node scripts/agent-check.mjs"
+    "agent:check": "node scripts/agent-check.mjs",
+    "spotcheck": "node scripts/spotcheck.mjs"
   }
 }
