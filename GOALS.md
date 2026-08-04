@@ -101,7 +101,7 @@ protobuf 인덱스 + 이미지 첨부입니다. 손글씨 카드라 비용 대�
 
 ## G-G. 공부 사이트 연결
 
-`C:\dev\pharmacist-exam-study-room` 의 `materials.source_key` 와 이 저장소의
+공부 관리 앱(`pharmacist-exam-study-room`) 의 `materials.source_key` 와 이 저장소의
 `source_key` 가 같은 형식(`<subjectKey>/<상대경로>`)입니다. 조인만 하면 붙습니다.
 
 주의: 그 앱의 `db/schema.ts` 는 본문을 **일부러** 받지 않습니다
