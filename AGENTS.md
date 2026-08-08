@@ -12,6 +12,10 @@
 ```bash
 npm run agent:next -- --n 20   # 읽을 PNG·쓸 경로·전사 규칙을 받는다
 npm run agent:check            # 쓴 것을 검증한다
+
+npm run e:next -- --n 5        # 강조 복원(G-A2). 잉크맵·줄번호 본문을 받는다
+npm run e:apply                # 지시서를 L1 에 반영한다
+npm run e:check                # 강조 게이트
 ```
 
 `lib/llm.mjs` 를 거치는 단계(g2·g3·g5·accuracy)는 `LLM_ENABLE=1` 없이는 즉시 멈춥니다.
@@ -48,8 +52,12 @@ yaksa-corpus/
   scripts/           파이프라인              커밋함
   reports/           검증 리포트             커밋함
   data/manifest.json L0                     ignore
+  data/emphasis-scan.jsonl 강조 픽셀 스캔    ignore
+  data/l1-baseline.jsonl   본문 지문         ignore
   render/{sha}/{page}.png                   ignore
+  render-ink/{sha}/p-NNNN.png 잉크맵         ignore
   l1/{sha}/{page}.md                        ignore
+  emphasis/{sha}/p-NNNN.json 강조 지시서     ignore
   l2/questions.jsonl cards.jsonl guide.json ignore
 ```
 
@@ -91,7 +99,7 @@ manifest의 `extract_route`를 그대로 따릅니다. 임의로 바꾸지 마�
 - 표는 마크다운 표로
 - 수식은 `$...$` LaTeX로
 - 화학 구조식·그림·그래프는 `[FIGURE: 무엇이 그려져 있는지 한 줄]`로
-- 빨강·굵게 같은 강조는 `**` 로 살립니다. 자료 만든 사람이 중요하다고 표시한 부분입니다
+- 강조는 아래 **L1 강조 표기** 대로 살립니다. 자료 만든 사람이 중요하다고 표시한 부분입니다
 - 판독 불가는 `[UNREADABLE]`
 
 **하지 않는 것**
@@ -111,6 +119,44 @@ subject_key: pharmacology
 material_type: textbook
 ---
 ```
+
+## L1 강조 표기
+
+**이 코퍼스에서 제일 값어치 있는 층입니다.** 자료 만든 사람이 빨간 글씨·형광펜·밑줄로
+칠해 둔 자리가 곧 "외울 것"입니다. 글자만 옮기고 강조를 버리면 평범한 텍스트 덤프가 됩니다.
+
+| 표기 | 원본에서 |
+|---|---|
+| `**글자**` | 빨강·파랑·초록 같은 색 글씨, 굵은 글씨 |
+| `<mark>글자</mark>` | 형광펜 |
+| `<u>글자</u>` | 밑줄 |
+
+겹쳐 씁니다: `<mark>**핵심**</mark>`.
+
+`==글자==` 는 **쓰지 마세요.** 원문에 `[A] + [R] ========= [AR]` 처럼 등호가 그대로 들어간
+쪽이 31쪽 있어서, 마커로 쓰면 본문과 구분이 안 됩니다.
+
+강조를 어디까지 잡느냐는 이렇게 봅니다.
+
+- **잡습니다** — 색 글씨, 형광펜, 밑줄, 굵은 글씨, 색 네모로 두른 낱말
+- **안 잡습니다** — 제목·머리글이라서 원래 굵은 것, 표 머리행, 본문 전체가 같은 색인 자료,
+  그림·구조식 안의 색(본문 글자가 아닙니다), 색 구분선과 배경 띠
+
+한 쪽이 통째로 파란 글씨면 그건 강조가 아니라 그 자료의 본문 색입니다. 다 칠하지 마세요.
+
+### 이미 전사한 쪽에 강조를 얹을 때 (G-A2)
+
+**본문을 다시 쓰지 않습니다.** 지시서만 씁니다. 자세한 절차는 `GOALS.md` 의 G-A2 를 보세요.
+
+```bash
+npm run e:next -- --n 5   # 잉크맵·원본 PNG·줄번호 붙은 본문·쓸 경로
+npm run e:apply           # 지시서를 L1 에 반영
+npm run e:check           # 게이트
+```
+
+`data/l1-baseline.jsonl` 에 쪽마다 **마커를 벗겨낸 본문의 SHA-256** 이 박혀 있습니다.
+강조를 붙이고 떼는 건 이 값을 안 바꾸고, 글자를 한 자라도 고치면 바뀝니다.
+`e:apply` 가 매번 대조해서 다르면 그 쪽을 거부합니다. 지문을 다시 잡는 건 사람이 합니다.
 
 ## L2 스키마
 

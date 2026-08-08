@@ -1,8 +1,14 @@
 # 원본 파생물은 절대 추적하지 않습니다. 전부 저작물입니다.
 data/
 render/
+render-ink/
 l1/
 l2/
+etc/
+emphasis/
+*.ppm
+*.pgm
+*.ppm.*
 .env
 .env.local
 
@@ -17,6 +23,8 @@ backups/
 logs/
 
 node_modules/
+__pycache__/
+*.pyc
 *.log
 .DS_Store
 Thumbs.db
